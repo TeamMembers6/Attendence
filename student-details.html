@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #007bff;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+
+        h3,
+        h4 {
+            color: #7bef77;
+            background-color: #f1f3f5;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            margin-bottom: 20px;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: #e68787;
+            text-align: center;
+        }
+
+        table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .no-records-message {
+            font-style: italic;
+            color: #6c757d;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .chat-button {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .chat-mentor {
+            display: none;
+            border-top: 2px solid #007bff;
+            padding-top: 20px;
+        }
+
+        .chat-window {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f1f1f1;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            position: relative;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-message.student {
+            text-align: right;
+            background-color: transparent;
+            
+            color: #007bff;
+        }
+
+        .chat-message.mentor {
+            text-align: left;
+            background-color: transparent;
+            border-color: #ddd;
+            color: #333;
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            /* Ensure spacing between message and timestamp */
+        }
+
+        .date-label {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #6c757d;
+        }
+.chat-form{
+    display: flex;
+}
+        .chat-form input[type="text"] {
+            width: calc(100% - 100px);
+        }
+
+        .chat-form button {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Student Details</h2>
+        <p><strong class="text-success">Student Id :</strong> <span id="student-name" class="text-info"></span></p>
+        <div id="attendance" class="mt-4">
+            <h3>Attendance</h3>
+            <div id="attendance-present-list">
+                <h4>Present List</h4>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Date</th>
+                            <th>Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-present-body">
+                        <!-- Rows will be dynamically added here -->
+                    </tbody>
+                </table>
+                <p id="no-present-message" class="no-records-message" style="display: none;">No presents in your
+                    history.</p>
+            </div>
+            <div id="attendance-absent-list">
+                <h4>Absent List</h4>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Date</th>
+                            <th>Attendance</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-absent-body">
+                        <!-- Rows will be dynamically added here -->
+                    </tbody>
+                </table>
+                <p id="no-absent-message" class="no-records-message" style="display: none;">No absences in your history.
+                </p>
+            </div>
+        </div>
+        <div class="chat-button">
+            <button id="chat-with-mentor" class="btn btn-primary">Chat with Mentor</button>
+        </div>
+        <div class="chat-mentor">
+            <h3 class="text-center">Chat with Mentor</h3>
+            <div class="chat-window" id="chat-window"></div>
+            <form id="chat-form" class="chat-form">
+                <input type="text" id="chat-input" placeholder="Type a message..." required>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        const ws = new WebSocket('ws://localhost:8080'); // Update with your WebSocket server URL
+
+        let lastMessageDate = null;
+
+        ws.onmessage = function (event) {
+            const messageData = JSON.parse(event.data);
+            appendMessage(messageData.sender, messageData.message, messageData.type, messageData.timestamp);
+        };
+
+
+        function appendMessage(sender, message, type, timestamp) {
+            const chatWindow = document.getElementById('chat-window');
+            const messageDate = new Date(timestamp);
+            const messageDay = messageDate.toDateString();
+
+            if (lastMessageDate !== messageDay) {
+                const dateLabel = document.createElement('div');
+                dateLabel.className = 'date-label';
+                dateLabel.innerText = messageDay;
+                chatWindow.appendChild(dateLabel);
+                lastMessageDate = messageDay;
+            }
+
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-message ${type}`;
+            messageElement.innerHTML = `
+        <div>${message}</div>
+        <div class="timestamp">${messageDate.toLocaleTimeString()}</div>
+    `;
+
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        document.getElementById('chat-with-mentor').addEventListener('click', async () => {
+            document.querySelector('.chat-button').style.display = 'none';
+            document.getElementById('attendance').style.display = 'none';
+            document.querySelector('.chat-mentor').style.display = 'block';
+
+            const studentId = getQueryParam('studentId');
+            const mentorId = '22jn1a05d1-g5'; // Dynamically set this if needed
+
+            try {
+                // Fetch chat history from the backend
+                const response = await fetch(`http://localhost:5000/chat-history/${studentId}/${mentorId}`);
+                const chatHistory = await response.json();
+
+                // Append chat history to chat window
+                chatHistory.forEach(messageData => {
+                    appendMessage(messageData.type === 'student' ? 'You' : 'Mentor', messageData.message, messageData.type, messageData.timestamp);
+                });
+            } catch (error) {
+                console.error('Error fetching chat history:', error);
+            }
+        });
+
+        document.getElementById('chat-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            const timestamp = new Date().toISOString();
+            const studentId = getQueryParam('studentId');
+            const mentorId = '22jn1a05d1-g5'; // Dynamically set this if needed
+
+            if (message) {
+                appendMessage('You', message, 'student', timestamp);
+                ws.send(JSON.stringify({
+                    type: 'chat',
+                    sender: 'Student',
+                    message: message,
+                    timestamp: timestamp,
+                    studentId: studentId
+                }));
+
+                try {
+                    // Send the message to the backend to be stored in the database
+                    await fetch('http://localhost:5000/save-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            studentId: studentId,
+                            mentorId: mentorId,
+                            message: message,
+                            timestamp: timestamp,
+                            type: 'student'
+                        })
+                    });
+                } catch (error) {
+                    console.error('Error saving message:', error);
+                }
+
+                input.value = '';
+            }
+        });
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        async function fetchAttendanceData(rollNo) {
+            try {
+                const response = await fetch(`http://localhost:5000/search-attendence/${rollNo}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching attendance data:', error.message);
+                return [];
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const studentId = getQueryParam('studentId');
+            const password = getQueryParam('password');
+
+            document.getElementById('student-name').innerText = studentId;
+
+            if (studentId) {
+                try {
+                    const attendanceData = await fetchAttendanceData(studentId);
+
+                    // Sort attendance data by date (today first)
+                    attendanceData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    const presentBody = document.getElementById('attendance-present-body');
+                    const absentBody = document.getElementById('attendance-absent-body');
+                    const noPresentMessage = document.getElementById('no-present-message');
+                    const noAbsentMessage = document.getElementById('no-absent-message');
+
+                    let hasPresent = false;
+                    let hasAbsent = false;
+
+                    // Populate Present List
+                    attendanceData.forEach(record => {
+                        if (record.attendence === 'present') {
+                            hasPresent = true;
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${studentId}</td>
+                                <td>${record.date}</td>
+                                <td>${record.attendence}</td>
+                            `;
+                            presentBody.appendChild(row);
+                        } else if (record.attendence === 'absent') {
+                            hasAbsent = true;
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${studentId}</td>
+                                <td>${record.date}</td>
+                                <td>${record.attendence}</td>
+                                <td>${record.purpose || 'N/A'}</td>
+                            `;
+                            absentBody.appendChild(row);
+                        }
+                    });
+
+                    // Show or hide messages based on the presence of records
+                    noPresentMessage.style.display = hasPresent ? 'none' : 'block';
+                    noAbsentMessage.style.display = hasAbsent ? 'none' : 'block';
+
+                    // Show the attendance section
+                    document.getElementById('attendance').style.display = 'block';
+                } catch (error) {
+                    console.error('Error fetching attendance data:', error.message);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

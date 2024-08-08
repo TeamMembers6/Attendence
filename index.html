@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        body {
+            background-color: bisque;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            padding: 20px;
+            background-color: black;
+            flex-wrap: wrap;
+        }
+        
+        input,
+        label {
+            display: none;
+        }
+
+        ul {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .logins , .changePassword{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .mentor-login,
+        .student-login, .mentor-change-password,.student-change-password{
+            background-color: rgba(233, 235, 235, 0.792);
+            width: 70%;
+            border: 0.8px solid grey;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 7px;
+        }
+
+        .password {
+           z-index:1;
+            position: relative;
+        }
+
+        .password i {
+            position: absolute;
+            color: black;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .logins input,
+        button {
+            width: 100%;
+        }
+
+        .logins span,
+        .changePassword span {
+            color: rgb(21, 228, 31);
+            font-size: 18px;
+        }
+
+        .logins .error ,.changePassword  .error{
+            color: red;
+            font-size: 14px;
+        }
+
+        .logins  .cpass{
+
+          cursor:pointer;
+          color:red;
+
+          padding:5px;
+
+        }
+        @media (max-width: 650px) {
+            .nav {
+                position: relative;
+            }
+
+            .nav ul {
+              z-index:2;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                width: 40%;
+                background-color: rgb(209, 45, 45);
+                height: auto;
+                flex-direction: column;
+                align-items: center;
+                display: none;
+                float: left;
+            }
+
+            label {
+                display: block;
+                display: flex;
+                padding: 10px 0;
+                align-items: center;
+                cursor: pointer;
+            }
+
+         .cpass{
+
+            padding:5px 10px;
+
+            color:red;
+
+          }
+            #menu:checked~ul {
+                display: flex;
+            }
+
+            .logins {
+                display: block;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .mentor-login,
+            .student-login {
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="con">
+        <div class="nav">
+            <h2>Attendance</h2>
+            <input type="checkbox" id="menu" />
+            <label for="menu"><i class="fa-solid fa-bars"></i></label>
+            <ul>
+                <li><a href="index.html"><i class="fa-solid fa-house mx-2"></i>Home</a></li>
+                <li><a href="about.html"><i class="fa-regular fa-address-card mx-2"></i>About</a></li>
+                <li><a href="contact.html"><i class="fa-regular fa-address-book mx-2"></i>Contact</a></li>
+                <li><a href="Student-signup.html"><i class="fa-solid fa-graduation-cap mx-2"></i>Student</a></li>
+            </ul>
+        </div>
+        <div class="logins">
+            <div class="mentor-login">
+                <h3 class="text-center text-primary">Mentor login</h3>
+                <div class="form-field w-60 m-2">
+                    <span>Mentor Id :</span>
+                    <input type="text" class="form-control" id="mentorIdInput" />
+                    <span class="error" id="mentorIdError"></span>
+                </div>
+                <div class="form-field w-60 m-2">
+                    <span>Password:</span>
+                    <div class="password">
+                        <input type="password" class="form-control" id="mentorPwdInput" />
+                        <i class="fa-solid fa-eye" onclick="toggle('mentorPwdInput', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('mentorPwdInput', this)" style="display: inline;"></i>
+                    </div>
+                    <span class="error" id="mentorPwdError"></span>
+                </div>
+
+                <span class="cpass" onclick="showMentorChangePassword()">Change Password</span>
+               
+                            <div class="form-field text-center m-2">
+                    <button onclick="mentorCheck()" class="btn btn-primary my-2">Submit</button>
+                </div>
+            </div>
+            <div class="student-login">
+                <h3 class="text-center text-primary">Student Login</h3>
+                <div class="form-field m-2">
+                    <span>Student Id :</span>
+                    <input type="text" class="form-control" id="rollno" />
+                    <span class="error" id="studentIdError"></span>
+                </div>
+                <div class="form-field m-2">
+                    <span>Password :</span>
+                    <div class="password">
+                        <input type="password" id="pwd" class="form-control" />
+                        <i class="fa-solid fa-eye" onclick="toggle('pwd', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('pwd', this)" style="display: inline;"></i>
+                    </div>
+                    <span class="error" id="studentPwdError"></span>
+                </div>
+                     <span class="cpass" onclick="showStudentChangePassword()">Change Password</span>
+           <div class="form-field text-center m-2">
+                    <button onclick="check()" class="btn btn-primary my-2">Submit</button>
+                </div>
+            </div>
+        </div>
+      <!-- Mentor Change Password Form -->
+      <div class="changePassword">
+        <div class="mentor-change-password" style="display: none;">
+    <h3 class="text-center text-primary">Mentor Change Password</h3>
+    <div class="form-field m-2">
+        <span>Current Password:</span>
+          
+      <div class="password">
+        <input type="password" id="mentorCurrentPwd" class="form-control" />
+                        <i class="fa-solid fa-eye" onclick="toggle('mentorCurrentPwd', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('mentorCurrentPwd', this)" style="display: inline;"></i>
+      </div>
+        <span class="error" id="mentorCurrentPwdError"></span>
+    </div>
+    <div class="form-field m-2">
+        <span>New Password:</span>
+            <div class="password">
+                      <input type="password" id="mentorNewPwd" class="form-control" />
+         <i class="fa-solid fa-eye" onclick="toggle('mentorNewPwd', this)"></i>
+          <i class="fa-solid fa-eye-slash" onclick="toggle('mentorNewPwd', this)" style="display: inline;"></i>
+            </div>       
+    <span class="error" id="mentorNewPwdError"></span>
+    </div>
+    <div class="form-field m-2">
+        <span>Confirm Password:</span>
+                    <div class="password">
+                      <input type="password" id="mentorConfirmPwd" class="form-control" />
+                 <i class="fa-solid fa-eye" onclick="toggle('mentorConfirmPwd', this)"></i>
+                <i class="fa-solid fa-eye-slash" onclick="toggle('mentorConfirmPwd', this)" style="display: inline;"></i>
+              </div>
+                      <span class="error" id="mentorConfirmPwdError"></span>
+    </div>
+    <div class="form-field text-center m-2">
+        <button onclick="mentorChangePassword()" class="btn btn-primary my-2">Submit</button>
+    </div>
+</div>
+
+      <div class="student-change-password" style="display: none;">
+            <h3 class="text-center text-primary">Student Change Password</h3>
+            <div class="form-field m-2">
+                <span>Current Password:</span>
+          <div class="password">
+  
+            <input type="password" id="studentCurrentPwd" class="form-control" />
+            <i class="fa-solid fa-eye" onclick="toggle('studentCurrentPwd', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('studentCurrentPwd', this)" style="display: inline;"></i>
+                    </div>
+                
+              <span class="error" id="studentCurrentPwdError"></span>
+            </div>
+            <div class="form-field m-2">
+                <span>New Password:</span>
+                       <div class="password">
+                         <input type="password" id="studentNewPwd" class="form-control"  />
+                        <i class="fa-solid fa-eye" onclick="toggle('studentNewPwd', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('studentNewPwd', this)" style="display: inline;"></i>
+                    </div>
+           
+              <span class="error" id="studentNewPwdError"></span>
+            </div>
+            <div class="form-field m-2">
+                <span>Confirm Password:</span>
+                     <div class="password">
+                
+                       <input type="password" id="studentConfirmPwd" class="form-control" />
+                     <i class="fa-solid fa-eye" onclick="toggle('studentConfirmPwd', this)"></i>
+                        <i class="fa-solid fa-eye-slash" onclick="toggle('studentConfirmPwd', this)" style="display: inline;"></i>
+                    </div>
+                <span class="error" id="studentConfirmPwdError"></span>
+            </div>
+            <div class="form-field text-center m-2">
+                <button onclick="studentChangePassword()" class="btn btn-primary my-2">Submit</button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+// Function to toggle password visibility
+function toggle(inputId, icon) {
+    const input = document.getElementById(inputId);
+    const eyeIcon = icon.parentElement.querySelector('.fa-eye');
+    const eyeSlashIcon = icon.parentElement.querySelector('.fa-eye-slash');
+
+    if (input.type === "password") {
+        input.type = "text";
+        eyeIcon.style.display = "inline";
+        eyeSlashIcon.style.display = "none";
+    } else {
+        input.type = "password";
+        eyeIcon.style.display = "none";
+        eyeSlashIcon.style.display = "inline";
+    }
+}
+
+// Function to show mentor change password form
+function showMentorChangePassword() {
+    document.querySelector('.mentor-login').style.display = 'none';
+document.querySelector('.student-login').style.display = 'none';    
+    document.querySelector('.mentor-change-password').style.display = 'block';
+}
+
+// Function to show student change password form
+function showStudentChangePassword() {
+    document.querySelector('.student-login').style.display = 'none';
+  document.querySelector('.mentor-login').style.display = 'none';
+
+    document.querySelector('.student-change-password').style.display = 'block';
+}
+
+// Function to handle mentor change password
+function mentorChangePassword() {
+    const currentPwd = document.getElementById('mentorCurrentPwd').value;
+    const newPwd = document.getElementById('mentorNewPwd').value;
+    const confirmPwd = document.getElementById('mentorConfirmPwd').value;
+    let valid = true;
+
+    // Clear previous error messages
+    document.getElementById('mentorCurrentPwdError').innerText = '';
+    document.getElementById('mentorNewPwdError').innerText = '';
+    document.getElementById('mentorConfirmPwdError').innerText = '';
+  if (newPwd.length < 8) {
+                document.getElementById('mentorNewPwdError').innerText = 'Password must be at least 8 characters long';
+                valid=false
+            }
+
+    // Validate current password
+    if (!currentPwd) {
+        document.getElementById('mentorCurrentPwdError').innerText = "Please enter your current password.";
+        valid = false;
+    }
+    // Validate new password
+    if (!newPwd) {
+        document.getElementById('mentorNewPwdError').innerText = "Please enter your new password.";
+        valid = false;
+    }
+    // Validate confirm password
+    if (newPwd !== confirmPwd) {
+        document.getElementById('mentorConfirmPwdError').innerText = "Passwords do not match.";
+        valid = false;
+    }
+
+    // If all fields are valid, proceed with form submission
+    if (valid) {
+        fetch('http://localhost:5000/mentor-change-password', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({  newpassword: newPwd ,password: currentPwd})
+        })
+            .then(res => res.json())
+            .then((data) => {
+               
+                
+                 if (data.message==='invalid'){
+                    document.getElementById('mentorCurrentPwdError').innerText ="Enter valid current password"
+                } else {
+                    
+                    alert('Password changed successfully');
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch((err) => { console.log('Error:', err); });
+    }
+}
+
+// Function to handle student change password
+function studentChangePassword() {
+    const currentPwd = document.getElementById('studentCurrentPwd').value;
+    const newPwd = document.getElementById('studentNewPwd').value;
+    const confirmPwd = document.getElementById('studentConfirmPwd').value;
+    let valid = true;
+
+    // Clear previous error messages
+    document.getElementById('studentCurrentPwdError').innerText = '';
+    document.getElementById('studentNewPwdError').innerText = '';
+    document.getElementById('studentConfirmPwdError').innerText = '';
+  if (newPwd.length < 8) {
+                document.getElementById('studentNewPwdError').innerText = 'Password must be at least 8 characters long';
+                valid =false;
+  }
+            
+    // Validate current password
+    if (!currentPwd) {
+        document.getElementById('studentCurrentPwdError').innerText = "Please enter your current password.";
+        valid = false;
+    }
+    // Validate new password
+    if (!newPwd) {
+        document.getElementById('studentNewPwdError').innerText = "Please enter your new password.";
+        valid = false;
+    }
+    // Validate confirm password
+    if (newPwd !== confirmPwd) {
+        document.getElementById('studentConfirmPwdError').innerText = "Passwords do not match.";
+        valid = false;
+    }
+
+    // If all fields are valid, proceed with form submission
+    if (valid) {
+        fetch('http://localhost:5000/student-change-password', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({  np: newPwd,cp: currentPwd })
+        })
+            .then(res => res.json())
+            .then((data) => {
+                if (data.message === 'success') {
+                    alert('Password changed successfully');
+                    window.location.href = 'student-details.html';
+                 } else {
+                      document.getElementById('studentCurrentPwdError').innerText = "Please enter your current password.";
+
+                }
+            })
+            .catch((err) => { console.log('Error:', err); });
+    }
+}
+
+
+// Existing mentorCheck function
+function mentorCheck() {
+    const mentorId = document.getElementById('mentorIdInput').value;
+    const mentorPwd = document.getElementById('mentorPwdInput').value;
+    let valid = true;
+
+    // Clear previous error messages
+    document.getElementById('mentorIdError').innerText = '';
+    document.getElementById('mentorPwdError').innerText = '';
+
+    // Validate mentor ID
+    if (!mentorId) {
+        document.getElementById('mentorIdError').innerText = "Please enter your mentor ID.";
+        valid = false;
+    }
+    // Validate mentor password
+    if (!mentorPwd) {
+        document.getElementById('mentorPwdError').innerText = "Please enter your password.";
+        valid = false;
+    }
+
+    // If all fields are valid, proceed with form submission
+    if (valid) {
+        fetch('http://localhost:5000/mentor-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mentorId: mentorId, mentorPwd: mentorPwd })
+        })
+            .then(res => res.json())
+            .then((data) => {
+                if (data.message === 'invalid') {
+                    document.getElementById('mentorIdError').innerText = "Invalid mentor ID.";
+                    document.getElementById('mentorPwdError').innerText = "Invalid mentor Password.";
+                } else {
+                    document.getElementById('mentorIdInput').value=''
+                    document.getElementById('mentorPwdInput').value=''
+                    window.location.href = 'mentor-dashboard.html';
+                    
+                }
+            })
+            .catch((err) => { console.log(err) });
+    }
+}
+
+// Existing check function
+function check() {
+    const ID = document.getElementById('rollno').value;
+    const PWD = document.getElementById('pwd').value;
+    let valid = true;
+
+    // Clear previous error messages
+    document.getElementById('studentIdError').innerText = '';
+    document.getElementById('studentPwdError').innerText = '';
+
+    // Validate student ID
+    if (!ID) {
+        document.getElementById('studentIdError').innerText = "Please enter your student ID.";
+        valid = false;
+    }
+    // Validate student password
+    if (!PWD) {
+        document.getElementById('studentPwdError').innerText = "Please enter your password.";
+        valid = false;
+    }
+
+    // If all fields are valid, proceed with form submission
+    if (valid) {
+        fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rollno: ID, password: PWD })
+        })
+            .then(res => res.json())
+            .then((data) => {
+                if (data.message === 'not found') {
+                    document.getElementById('studentIdError').innerText = "Invalid student ID.";
+                    document.getElementById('studentPwdError').innerText = "Invalid password.";
+                } else {
+                    document.getElementById('rollno').value='';
+                    document.getElementById('pwd').value='';
+                    window.location.href = `student-details.html?password=${PWD}&studentId=${encodeURIComponent(ID)}`;
+                    
+                }
+            })
+            .catch((err) => { console.log(err) });
+    }
+}
+
+</script>
+</body>
+</html>

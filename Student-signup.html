@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .signup-container form {
+            width: 300px;
+        }
+
+        .signup-container .form-control {
+            margin-bottom: 15px;
+        }
+
+        .signup-container .btn {
+            width: 100%;
+        }
+
+        .password {
+           
+            position: relative;
+        }
+
+        .password i {
+            position: absolute;
+            color: black;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="signup-container">
+        <h2 class="text-center text-secondary">Student Sign Up</h2>
+        <form id="signup-form" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">User Name:</label>
+                <input type="text" class="form-control" id="username" required minlength="6">
+                <div class="invalid-feedback">Username must be at least 6 characters long.</div>
+            </div>
+            <div class="mb-3">
+                <label for="rollno" class="form-label"></label>RollNo :</label>
+                <input type="text" class="form-control" id="rollno" required pattern="[A-Za-z0-9]{10}$">
+                <div class="invalid-feedback">Please enter a valid Rollno.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Create Strong Password:</label>
+                <div class="password">
+                    <input type="password" id="password" class="form-control" required minlength="8" />
+                    <i class="fa-solid fa-eye" onclick="toggle('password', this)"></i>
+                    <i class="fa-solid fa-eye-slash" onclick="toggle('password', this)" style="display: inline;"></i>
+                </div>
+                <div class="invalid-feedback">Password must be at least 8 characters long.</div>
+            </div>
+            <div class="mb-3">
+                <label for="mobile" class="form-label">Mobile Number:</label>
+                <input type="tel" class="form-control" id="mobile" required pattern="\d{10}">
+                <div class="invalid-feedback">Mobile number must be 10 digits long.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        <a href="index.html" class="login-link">Already have an account? Login</a>
+    </div>
+
+    <script>
+        function toggle(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = icon.parentElement.querySelector('.fa-eye');
+            const eyeSlashIcon = icon.parentElement.querySelector('.fa-eye-slash');
+
+            if (input.type === "password") {
+                input.type = "text";
+                eyeIcon.style.display = "inline";
+                eyeSlashIcon.style.display = "none";
+            } else {
+                input.type = "password";
+                eyeIcon.style.display = "none";
+                eyeSlashIcon.style.display = "inline";
+            }
+        }
+
+        document.getElementById('signup-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            let form = this;
+
+            if (form.checkValidity() === false) {
+                form.classList.add('was-validated');
+
+            } else {
+                let name = document.getElementById('username').value;
+                let rollno = document.getElementById('rollno').value;
+                let password = document.getElementById('password').value;
+                let mobile = document.getElementById('mobile').value;
+
+                fetch('http://localhost:5000/studentSignup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, rollno: rollno, password: password, mobile: mobile })
+                })
+                    .then(res => res.json())
+                    .then((data) => {
+                        window.location.href = 'index.html'
+                    })
+
+                    .catch(err => console.log(err))
+
+
+            }
+        });
+    </script>
+</body>
+
+</html>
