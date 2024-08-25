@@ -507,7 +507,7 @@ function check() {
 
     // If all fields are valid, proceed with form submission
     if (valid) {
-        fetch('http://localhost:5000/login', {
+        fetch('https://attendence-owxt.onrender.com/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rollno: ID, password: PWD })
