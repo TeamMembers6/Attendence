@@ -515,6 +515,8 @@ function check() {
             .then(res => res.json())
             .then((data) => {
                 if (data.message === 'not found') {
+
+                    alert("data") 
                     document.getElementById('studentIdError').innerText = "Invalid student ID.";
                     document.getElementById('studentPwdError').innerText = "Invalid password.";
                 } else {
@@ -524,7 +526,8 @@ function check() {
                     
                 }
             })
-            .catch((err) => { console.log(err) });
+            .catch((err) => {alert(err)
+                console.log(err) });
     }
 }
 
