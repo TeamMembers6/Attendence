@@ -126,7 +126,7 @@ app.post('/login',(req,res)=>{
         
     })
     .catch((err)=>{
-        res.send("<p>error in server</p>")
+       res.send(err)
     })
 })
 
