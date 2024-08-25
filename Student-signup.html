@@ -132,7 +132,7 @@
                 let password = document.getElementById('password').value;
                 let mobile = document.getElementById('mobile').value;
 
-                fetch('http://localhost:5000/studentSignup', {
+                fetch('https://attendence-owxt.onrender.com/studentSignup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: name, rollno: rollno, password: password, mobile: mobile })
