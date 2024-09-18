@@ -234,7 +234,7 @@
 
             try {
                 // Fetch chat history from the backend
-                const response = await fetch(`http://localhost:5000/chat-history/${studentId}/${mentorId}`);
+                const response = await fetch(`https://attendence-owxt.onrender.com/chat-history/${studentId}/${mentorId}`);
                 const chatHistory = await response.json();
 
                 // Append chat history to chat window
@@ -266,7 +266,7 @@
 
                 try {
                     // Send the message to the backend to be stored in the database
-                    await fetch('http://localhost:5000/save-message', {
+                    await fetch('https://attendence-owxt.onrender.com/save-message', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -294,7 +294,7 @@
 
         async function fetchAttendanceData(rollNo) {
             try {
-                const response = await fetch(`http://localhost:5000/search-attendence/${rollNo}`);
+                const response = await fetch(`https://attendence-owxt.onrender.com/search-attendence/${rollNo}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
