@@ -345,7 +345,7 @@
         function fetchAttendanceData(date) {
            
 
-            fetch('http://localhost:5000/attendence-list')
+            fetch('https://attendence-owxt.onrender.com/attendence-list')
                 .then(res => {
                     if (!res.ok) throw new Error('Network response was not ok');
                     return res.json();
@@ -394,7 +394,7 @@
                 const attendance = row.querySelector('select').value;
                 const purpose = row.querySelector('td:last-child p').innerText.trim();
 
-                fetch('http://localhost:5000/save-attendence', {
+                fetch('https://attendence-owxt.onrender.com/save-attendence', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -491,7 +491,7 @@
         }
 
         function loadStudentAttendance() {
-            fetch('http://localhost:5000/student-attendence')
+            fetch('https://attendence-owxt.onrender.com/student-attendence')
                 .then(res => {
                     if (!res.ok) throw new Error('Network response was not ok');
                     return res.json();
@@ -550,7 +550,7 @@
                 return;
             }
 
-            fetch(`http://localhost:5000/search-attendence/${rollno}`)
+            fetch(`https://attendence-owxt.onrender.com/search-attendence/${rollno}`)
                 .then(res => {
                     if (res.status === 404) {
                         throw new Error('Student ID not found.');
@@ -661,7 +661,7 @@
 
             try {
                 
-                const response = await fetch(`http://localhost:5000/chat-history/${studentId}/22jn1a05d1-g5`);
+                const response = await fetch(`https://attendence-owxt.onrender.com/chat-history/${studentId}/22jn1a05d1-g5`);
                 stdid = studentId
                 if (!response.ok) {
                     throw new Error('Failed to load chat history');
@@ -726,7 +726,7 @@
 
                 try {
                     // Send the message to the backend to be stored in the database
-                    await fetch('http://localhost:5000/save-message', {
+                    await fetch('https://attendence-owxt.onrender.com/save-message', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
