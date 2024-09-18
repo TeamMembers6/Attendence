@@ -365,7 +365,7 @@ function mentorChangePassword() {
 
     // If all fields are valid, proceed with form submission
     if (valid) {
-        fetch('http://localhost:5000/mentor-change-password', {
+        fetch('https://attendence-owxt.onrender.com/mentor-change-password', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({  newpassword: newPwd ,password: currentPwd})
@@ -420,7 +420,7 @@ function studentChangePassword() {
 
     // If all fields are valid, proceed with form submission
     if (valid) {
-        fetch('http://localhost:5000/student-change-password', {
+        fetch('https://attendence-owxt.onrender.com/student-change-password', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({  np: newPwd,cp: currentPwd })
@@ -463,7 +463,7 @@ function mentorCheck() {
 
     // If all fields are valid, proceed with form submission
     if (valid) {
-        fetch('http://localhost:5000/mentor-login', {
+        fetch('https://attendence-owxt.onrender.com/mentor-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mentorId: mentorId, mentorPwd: mentorPwd })
